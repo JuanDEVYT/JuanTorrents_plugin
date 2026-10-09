@@ -1,7 +1,7 @@
 {
   "id": "mytorrents",
   "name": "Mis Torrents",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "apiVersion": 8,
   "entry": "plugin.js",
   "description": "Pega el magnet o la URL .torrent de tus propios torrents (los de tu servidor) y reprodúcelos en Kino vía la API pública de Webtor.io.",

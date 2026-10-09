@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.0";
+const VERSION = "0.3.1";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -164,7 +164,7 @@ function recallLink(resourceId) {
 // Capacidades expuestas a Kino
 // ---------------------------------------------------------------------------------------------
 
-export async function home() {
+async function buildRows() {
   const entries = torrentEntries();
   const items = [];
   for (const entry of entries) {
@@ -193,6 +193,17 @@ export async function home() {
   }
   if (!items.length) return [];
   return [{ id: "mytorrents", title: "Mis Torrents", items }];
+}
+
+export async function home() {
+  return buildRows();
+}
+
+// El manifiesto declara "section": { "label": "Mis Torrents" }, así que Kino exige esta función
+// (si falta, el plugin no carga: "le falta section").
+export async function section(arg) {
+  const rows = await buildRows();
+  return { rows };
 }
 
 export async function episodes(ref) {
