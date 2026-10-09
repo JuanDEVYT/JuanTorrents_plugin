@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.4";
+const VERSION = "0.3.5";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -172,7 +172,7 @@ function recallLink(resourceId) {
 // Capacidades expuestas a Kino
 // ---------------------------------------------------------------------------------------------
 
-async function buildRows() {
+async function buildRows(problems) {
   const entries = torrentEntries();
   const items = [];
   for (const entry of entries) {
@@ -196,7 +196,10 @@ async function buildRows() {
         });
       }
     } catch (e) {
-      // Un torrent roto no debe tumbar el resto de la fila.
+      // Un torrent roto no debe tumbar el resto de la fila, pero se anota para mostrarlo.
+      const why = (e && (e.userMessage || e.message)) || String(e);
+      kino.log("torrent fallido:", why);
+      if (problems) problems.push(why);
     }
   }
   if (!items.length) return [];
@@ -210,8 +213,18 @@ export async function home() {
 // El manifiesto declara "section": { "label": "Mis Torrents" }, así que Kino exige esta función
 // (si falta, el plugin no carga: "le falta section").
 export async function section(arg) {
-  const rows = await buildRows();
-  return { rows };
+  const problems = [];
+  const rows = await buildRows(problems);
+  if (rows.length) return { rows };
+  let text;
+  if (!torrentEntries().length) {
+    text = "Aún no tienes torrents: agrégalos en Ajustes ▸ Plugins ▸ Mis Torrents.";
+  } else if (problems.length) {
+    text = "Falló: " + problems[0];
+  } else {
+    text = "Los torrents se añadieron pero no traen archivos de video reproducibles.";
+  }
+  return { rows: [], hero: { title: "Sin torrents para mostrar", text: text.slice(0, 300) } };
 }
 
 export async function episodes(ref) {
