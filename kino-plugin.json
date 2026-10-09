@@ -1,14 +1,21 @@
 {
   "id": "mytorrents",
   "name": "Mis Torrents",
-  "version": "0.3.3",
-  "apiVersion": 8,
+  "version": "0.3.4",
+  "apiVersion": 6,
   "entry": "plugin.js",
   "description": "Pega el magnet o la URL .torrent de tus propios torrents (los de tu servidor) y reprodúcelos en Kino vía la API pública de Webtor.io.",
   "author": "JuanDEVYT",
-  "homepage": "https://github.com/JuanDEVYT/kino-mytorrents",
-  "hosts": ["api.webtor.io", "*.webtor.io"],
-  "capabilities": ["home", "resolve", "episodes"],
+  "homepage": "https://github.com/JuanDEVYT/JuanTorrents_plugin",
+  "hosts": [
+    "api.webtor.io",
+    "*.webtor.io"
+  ],
+  "capabilities": [
+    "home",
+    "resolve",
+    "episodes"
+  ],
   "color": "#2ECC71",
   "icon": "icon.png",
   "section": {
@@ -21,7 +28,7 @@
       "key": "about",
       "label": "Mis Torrents",
       "type": "section",
-      "hint": "Pega el magnet o la URL .torrent de tus propios torrents. Cada uno aparece como un título en Inicio; si trae varios archivos de video, se ven como episodios."
+      "hint": "Pega el magnet o URL .torrent de tus torrents; salen en Inicio."
     },
     {
       "key": "torrents",
@@ -29,8 +36,19 @@
       "type": "list",
       "max": 20,
       "fields": [
-        { "key": "nombre", "label": "Nombre", "type": "text", "hint": "Opcional" },
-        { "key": "url", "label": "Magnet o URL .torrent", "type": "text", "required": true, "hint": "Máx. 500 caracteres: usa magnet:?xt=urn:btih:HASH (sin trackers), solo el HASH, o https://.../archivo.torrent" }
+        {
+          "key": "nombre",
+          "label": "Nombre",
+          "type": "text",
+          "hint": "Opcional"
+        },
+        {
+          "key": "url",
+          "label": "Magnet o URL .torrent",
+          "type": "text",
+          "required": true,
+          "hint": "magnet:?xt=urn:btih:HASH (máx. 500 caracteres) o URL .torrent"
+        }
       ]
     },
     {

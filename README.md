@@ -1,6 +1,6 @@
 # Mis Torrents para Kino
 
-Plugin de video para Kino (apiVersion 8, Kino 0.9.54 o superior): pega el magnet o la URL `.torrent`
+Plugin de video para Kino (apiVersion 6, Kino 0.9.50 o superior): pega el magnet o la URL `.torrent`
 de tus propios torrents en Ajustes y aparecen en Inicio listos para reproducir. Si un torrent trae
 varios archivos de video, se listan como episodios; si trae uno solo, se reproduce directo.
 

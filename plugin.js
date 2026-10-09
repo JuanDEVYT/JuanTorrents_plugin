@@ -1,5 +1,5 @@
 /// <reference path="./kino.d.ts" />
-// Mis Torrents para Kino · apiVersion 8
+// Mis Torrents para Kino · apiVersion 6
 //
 // Pega el magnet o la URL .torrent de TUS propios torrents en Ajustes ("Tus torrents", lista) y aparecen
 // en Inicio listos para reproducir. La resolución del stream usa la API REST pública de Webtor.io
@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.3";
+const VERSION = "0.3.4";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
