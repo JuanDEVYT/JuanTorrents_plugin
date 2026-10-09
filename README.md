@@ -6,10 +6,10 @@ sección.
 
 ## Cómo reproduce
 
-Al darle play, Kino abre en su navegador oculto la web de Webtor (`https://webtor.io/show?magnet=...`) y
+Al darle play, Kino abre en su navegador oculto la web de Webtor (`https://webtor.io/<hash>`) y
 captura la URL del video que pide el reproductor de Webtor (`kino.browser.capture`). No usa API ni key.
 
-La dirección de la página de Webtor (`SHOW_URL` en `plugin.js`) no está verificada: si no captura nada,
+La dirección de la página de Webtor (`pageUrl` en `plugin.js`): si no captura nada,
 es lo primero que hay que revisar.
 
 ## Ajustes

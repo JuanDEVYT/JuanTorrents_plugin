@@ -5,10 +5,30 @@
 // Al darle play, Kino abre en su navegador oculto la web de Webtor (https://webtor.io) con ese magnet y
 // captura la URL del video que el reproductor de Webtor pide. No usa API ni key.
 //
-// OJO: la dirección de la página de Webtor (SHOW_URL) está sin verificar. Si no captura nada, es lo primero
-// que hay que revisar.
+// La página de Webtor de un torrent es https://webtor.io/<infohash> (40 hex). Con un hash base32 se usa
+// la forma /show?magnet=..., que no está verificada.
 
 const SHOW_URL = "https://webtor.io/show?magnet=";
+
+function infoHash(link) {
+  const m = /xt=urn:btih:([0-9a-f]{40})(?![0-9a-z])/i.exec(link);
+  return m ? m[1].toLowerCase() : null;
+}
+
+function pageUrl(link) {
+  const h = infoHash(link);
+  return h ? "https://webtor.io/" + h : SHOW_URL + encodeURIComponent(link);
+}
+
+// Para el log: dirección sin tokens (solo host, ruta y nombres de los parámetros).
+function safeUrl(u) {
+  const s = String(u || "");
+  const q = s.indexOf("?");
+  const base = (q < 0 ? s : s.slice(0, q)).slice(0, 160);
+  if (q < 0) return base;
+  const keys = s.slice(q + 1).split("&").map((kv) => kv.split("=")[0]).slice(0, 8).join(",");
+  return base + " ?" + keys;
+}
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -94,7 +114,7 @@ export async function resolve(ref) {
   }
   let page;
   try {
-    page = await kino.browser.capture(SHOW_URL + encodeURIComponent(link), { timeoutMs: 25000 });
+    page = await kino.browser.capture(pageUrl(link), { timeoutMs: 25000 });
   } catch (e) {
     kino.log("captura fallida:", (e && (e.code || "")) + " " + ((e && e.message) || e));
     throw e;
@@ -104,6 +124,10 @@ export async function resolve(ref) {
       userMessage: "Webtor no mostró ningún video para este torrent (¿tiene semillas?).",
     });
   }
+  for (const m of page.media) {
+    kino.log("media:", safeUrl(m.url), "mime=" + (m.mime || "?"), "headers=" + Object.keys(m.headers || {}).join(","));
+  }
+  kino.log("pagina final:", safeUrl(page.finalUrl));
   const [first, ...rest] = page.media;
   return {
     url: first.url,
