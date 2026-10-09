@@ -1,98 +1,53 @@
 {
-  "id": "archive-org",
-  "name": "Internet Archive",
-  "version": "1.4.2",
-  "apiVersion": 3,
+  "id": "mytorrents",
+  "name": "Mis Torrents",
+  "version": "0.1.0",
+  "apiVersion": 8,
   "entry": "plugin.js",
-  "description": "Películas de dominio público y televisión clásica de archive.org",
-  "author": "kinotvapp",
-  "homepage": "https://github.com/kinotvapp/kino-plugin-archive",
-  "hosts": [
-    "archive.org",
-    "*.archive.org"
-  ],
-  "capabilities": [
-    "search",
-    "home",
-    "browse",
-    "episodes",
-    "resolve",
-    "download"
-  ],
-  "color": "#E0A030",
+  "description": "Pega el magnet o la URL .torrent de tus propios torrents (los de tu servidor) y reprodúcelos en Kino vía la API pública de Webtor.io.",
+  "author": "JuanDEVYT",
+  "homepage": "https://github.com/JuanDEVYT/kino-mytorrents",
+  "hosts": ["api.webtor.io", "*.webtor.io"],
+  "capabilities": ["home", "resolve", "episodes"],
+  "color": "#2ECC71",
   "icon": "icon.png",
+  "section": {
+    "label": "Mis Torrents"
+  },
+  "debug": false,
+  "telemetry": false,
   "settings": [
     {
-      "key": "url1",
-      "label": "Dirección 1",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
+      "key": "about",
+      "label": "Mis Torrents",
+      "type": "section",
+      "hint": "Pega aquí el magnet o la URL .torrent de tus propios torrents (por ejemplo los que siembras en tu servidor). Cada uno aparece como un título en Inicio; si el torrent trae varios archivos de video, los verás como episodios."
     },
     {
-      "key": "cat1",
-      "label": "Categoría 1",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
+      "key": "torrents",
+      "label": "Tus torrents",
+      "type": "list",
+      "max": 20,
+      "fields": [
+        { "key": "name", "label": "Nombre (opcional)", "type": "text" },
+        { "key": "link", "label": "Magnet o URL .torrent", "type": "url" }
+      ]
     },
     {
-      "key": "url2",
-      "label": "Dirección 2",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
+      "key": "apiKey",
+      "label": "API key de Webtor (opcional)",
+      "type": "password",
+      "hint": "Opcional. Sin ella usas el límite gratuito compartido de Webtor. Con tu propia key (webtor.io o RapidAPI) tienes tu propio límite."
     },
     {
-      "key": "cat2",
-      "label": "Categoría 2",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
+      "key": "status",
+      "label": "Estado",
+      "type": "status"
     },
     {
-      "key": "url3",
-      "label": "Dirección 3",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
-    },
-    {
-      "key": "cat3",
-      "label": "Categoría 3",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
-    },
-    {
-      "key": "url4",
-      "label": "Dirección 4",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
-    },
-    {
-      "key": "cat4",
-      "label": "Categoría 4",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
-    },
-    {
-      "key": "url5",
-      "label": "Dirección 5",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
-    },
-    {
-      "key": "cat5",
-      "label": "Categoría 5",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
-    },
-    {
-      "key": "url6",
-      "label": "Dirección 6",
-      "type": "url",
-      "hint": "https://archive.org/details/… o una búsqueda"
-    },
-    {
-      "key": "cat6",
-      "label": "Categoría 6",
-      "type": "text",
-      "hint": "Opcional: nombre de la fila en el Home"
+      "key": "refresh",
+      "label": "Volver a cargar los torrents",
+      "type": "action"
     }
   ]
 }
