@@ -1,20 +1,19 @@
 {
   "id": "mytorrents",
   "name": "Mis Torrents",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "apiVersion": 6,
   "entry": "plugin.js",
-  "description": "Pega el magnet o URL .torrent de tus propios torrents y reprodúcelos en Kino con la API de Webtor (vía RapidAPI).",
+  "description": "Pega el magnet de tus propios torrents y reprodúcelos en Kino usando la web de Webtor.",
   "author": "JuanDEVYT",
   "homepage": "https://github.com/JuanDEVYT/JuanTorrents_plugin",
   "hosts": [
-    "webtor.p.rapidapi.com",
+    "webtor.io",
     "*.webtor.io"
   ],
   "capabilities": [
     "home",
-    "resolve",
-    "episodes"
+    "resolve"
   ],
   "color": "#2ECC71",
   "icon": "icon.png",
@@ -28,7 +27,7 @@
       "key": "about",
       "label": "Mis Torrents",
       "type": "section",
-      "hint": "Pega el magnet o URL .torrent de tus torrents; salen en Inicio."
+      "hint": "Pega el magnet de tus torrents; salen en Inicio."
     },
     {
       "key": "torrents",
@@ -44,29 +43,14 @@
         },
         {
           "key": "url",
-          "label": "Magnet o URL .torrent",
+          "label": "Magnet o hash",
           "type": "text",
           "required": true,
-          "hint": "magnet:?xt=urn:btih:HASH (máx. 500 caracteres) o URL .torrent"
+          "hint": "magnet:?xt=urn:btih:HASH o solo el HASH (máx. 500 caracteres)"
         }
       ]
-    },
-    {
-      "key": "apiKey",
-      "label": "API key de RapidAPI (Webtor)",
-      "type": "password",
-      "hint": "Gratis en rapidapi.com: suscríbete a Webtor y copia tu key",
-      "required": true
-    },
-    {
-      "key": "linked",
-      "label": "Estado",
-      "type": "status"
-    },
-    {
-      "key": "refresh",
-      "label": "Volver a cargar los torrents",
-      "type": "action"
     }
-  ]
+  ],
+  "browser": true,
+  "streamHosts": "any"
 }
