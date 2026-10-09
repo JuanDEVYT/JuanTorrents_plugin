@@ -1,14 +1,14 @@
 {
   "id": "mytorrents",
   "name": "Mis Torrents",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "apiVersion": 6,
   "entry": "plugin.js",
-  "description": "Pega el magnet o la URL .torrent de tus propios torrents (los de tu servidor) y reprodúcelos en Kino vía la API pública de Webtor.io.",
+  "description": "Pega el magnet o URL .torrent de tus propios torrents y reprodúcelos en Kino con la API de Webtor (vía RapidAPI).",
   "author": "JuanDEVYT",
   "homepage": "https://github.com/JuanDEVYT/JuanTorrents_plugin",
   "hosts": [
-    "api.webtor.io",
+    "webtor.p.rapidapi.com",
     "*.webtor.io"
   ],
   "capabilities": [
@@ -53,9 +53,10 @@
     },
     {
       "key": "apiKey",
-      "label": "API key de Webtor (opcional)",
+      "label": "API key de RapidAPI (Webtor)",
       "type": "password",
-      "hint": "Opcional. Sin ella usas el límite gratuito compartido de Webtor."
+      "hint": "Gratis en rapidapi.com: suscríbete a Webtor y copia tu key",
+      "required": true
     },
     {
       "key": "linked",

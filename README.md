@@ -6,7 +6,7 @@ varios archivos de video, se listan como episodios; si trae uno solo, se reprodu
 
 ## Cómo saca el stream (y por qué no usa el navegador oculto)
 
-Usa la API REST pública de Webtor (`https://api.webtor.io`), en tres pasos normales de HTTP/JSON:
+Usa la API REST pública de Webtor (`https://webtor.p.rapidapi.com`, vía RapidAPI; requiere tu key de RapidAPI en Ajustes), en tres pasos normales de HTTP/JSON:
 
 1. `POST /resource/` con el magnet o la URL del `.torrent` → Webtor lo añade y devuelve metadatos
    (nombre, tamaño, si es de un solo archivo o varios).
@@ -16,7 +16,7 @@ Usa la API REST pública de Webtor (`https://api.webtor.io`), en tres pasos norm
 
 Pedí usar el navegador oculto (`kino.browser.capture`) para esto, pero no hacía falta: ese mecanismo
 sirve para cuando un sitio arma la URL del video ejecutando su propio JavaScript y no hay otra forma
-de verla. Webtor expone esos tres pasos como una API REST normal (`api.webtor.io`), así que
+de verla. Webtor expone esos tres pasos como una API REST normal (`webtor.p.rapidapi.com`), así que
 `kino.fetch` directo es más simple y más confiable que simular un navegador — nada que capturar, nada
 que se rompa si Webtor cambia su reproductor web. El widget embebible de Webtor (el que usarías en una
 página) sí arma su iframe mandando el magnet por `postMessage` después de cargar, lo cual no encaja
@@ -32,7 +32,7 @@ Por ahora no es necesario.
 - **Tus torrents**: lista (hasta 20) con "Nombre" (opcional) y "Magnet o URL .torrent" (obligatorio)
   por entrada — puedes ir agregando filas desde Kino. Si dejas el nombre vacío, se usa el nombre que
   el propio torrent trae (Webtor lo devuelve al añadirlo).
-- **API key de Webtor (opcional)**: sin ella usas el límite gratuito compartido; con tu propia key
+- **API key de RapidAPI (obligatoria)**: la de tu cuenta de rapidapi.com suscrita a la API de Webtor; con ella
   (cuenta en webtor.io, o RapidAPI) tienes tu propio límite de uso.
 - **Estado**: cuántos de tus torrents están cargando bien ahora mismo.
 - **Volver a cargar los torrents**: borra la caché local (`kino.storage`) y fuerza a releer metadatos

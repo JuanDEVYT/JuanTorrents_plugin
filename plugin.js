@@ -3,7 +3,7 @@
 //
 // Pega el magnet o la URL .torrent de TUS propios torrents en Ajustes ("Tus torrents", lista) y aparecen
 // en Inicio listos para reproducir. La resolución del stream usa la API REST pública de Webtor.io
-// (https://api.webtor.io): añade el torrent como "recurso", lista sus archivos y pide un link de stream
+// (https://webtor.p.rapidapi.com, vía RapidAPI): añade el torrent como "recurso", lista sus archivos y pide un link de stream
 // ya transcodificado. No usa el navegador oculto de Kino: la API de Webtor expone estos tres pasos como
 // JSON normal, así que no hace falta simular nada dentro de una página.
 //
@@ -11,9 +11,10 @@
 // url con required:true): una versión anterior con sus propias claves ("name"/"link", sin required) dio
 // "error en el campo settings" al instalar.
 
-const API = "https://api.webtor.io";
+const API = "https://webtor.p.rapidapi.com";
+const RAPID_HOST = "webtor.p.rapidapi.com";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.6";
+const VERSION = "0.4.0";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -50,12 +51,18 @@ function looksLikeTorrentLink(link) {
 
 function webtorHeaders(extra) {
   const h = Object.assign({}, extra || {});
+  h["X-RapidAPI-Host"] = RAPID_HOST;
   const key = apiKey();
-  if (key) h["X-Api-Key"] = key;
+  if (key) h["X-RapidAPI-Key"] = key;
   return h;
 }
 
 async function addResource(link) {
+  if (!apiKey()) {
+    throw kino.error("unavailable", "falta la API key", {
+      userMessage: "Falta la API key de RapidAPI: pégala en Ajustes ▸ Plugins ▸ Mis Torrents.",
+    });
+  }
   // La ruta exacta del POST no está verificada: se prueba con y sin "/" final y se informa lo que responda Webtor.
   const paths = ["/resource/", "/resource"];
   let r = null;
@@ -71,6 +78,11 @@ async function addResource(link) {
   if (r.status === 408) {
     throw kino.error("timeout", "webtor resource timeout (torrent sin semillas?)", {
       userMessage: "Webtor no pudo descargar los metadatos del torrent (¿sigue teniendo semillas?).",
+    });
+  }
+  if (r.status === 401 || r.status === 403) {
+    throw kino.error("unavailable", "webtor resource " + r.status, {
+      userMessage: "RapidAPI rechazó la key: revisa que sea correcta y que estés suscrito a la API de Webtor.",
     });
   }
   if (r.status === 429) throw kino.error("rate_limited", "webtor resource 429");
@@ -101,8 +113,6 @@ function isVideoFile(f) {
 
 async function exportStream(resourceId, contentId) {
   const params = new URLSearchParams({ types: "stream" });
-  const key = apiKey();
-  if (key) params.set("api-key", key);
   const r = await kino.fetch(
     API + "/resource/" + encodeURIComponent(resourceId) + "/export/" + encodeURIComponent(contentId) + "?" + params.toString(),
     { headers: webtorHeaders(), timeoutMs: 20000 },
