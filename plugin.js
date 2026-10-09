@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.5";
+const VERSION = "0.3.6";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -56,19 +56,29 @@ function webtorHeaders(extra) {
 }
 
 async function addResource(link) {
-  const r = await kino.fetch(API + "/resource/", {
-    method: "POST",
-    headers: webtorHeaders({ "Content-Type": "text/plain" }),
-    body: link,
-    timeoutMs: 25000,
-  });
+  // La ruta exacta del POST no está verificada: se prueba con y sin "/" final y se informa lo que responda Webtor.
+  const paths = ["/resource/", "/resource"];
+  let r = null;
+  for (const path of paths) {
+    r = await kino.fetch(API + path, {
+      method: "POST",
+      headers: webtorHeaders({ "Content-Type": "text/plain" }),
+      body: link,
+      timeoutMs: 25000,
+    });
+    if (r.status !== 404 && r.status !== 405) break;
+  }
   if (r.status === 408) {
     throw kino.error("timeout", "webtor resource timeout (torrent sin semillas?)", {
       userMessage: "Webtor no pudo descargar los metadatos del torrent (¿sigue teniendo semillas?).",
     });
   }
   if (r.status === 429) throw kino.error("rate_limited", "webtor resource 429");
-  if (!r.ok) throw kino.error("unavailable", "webtor resource " + r.status);
+  if (!r.ok) {
+    let body = "";
+    try { body = String(r.text() || "").replace(/\s+/g, " ").slice(0, 80); } catch (e) {}
+    throw kino.error("unavailable", ("webtor resource " + r.status + (body ? ": " + body : "")).slice(0, 190));
+  }
   return r.json(); // { id, name, magnet_uri, size, files_count, multi_file, file? }
 }
 
