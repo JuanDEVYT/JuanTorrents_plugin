@@ -1,26 +1,34 @@
 /// <reference path="./kino.d.ts" />
 // Mis Torrents para Kino · apiVersion 8
 //
-// Pega el magnet o la URL .torrent de TUS propios torrents en Ajustes (lista "Tus torrents") y aparecen
-// en Inicio listos para reproducir. La resolución del stream usa la API REST pública de Webtor.io
-// (https://api.webtor.io): añade el torrent como "recurso", lista sus archivos y pide un link de stream
-// ya transcodificado. No usa el navegador oculto de Kino: la API de Webtor expone estos tres pasos como
-// JSON normal, así que no hace falta simular nada dentro de una página.
+// Pega el magnet o la URL .torrent de TUS propios torrents en Ajustes (hasta 10 campos "Torrent N") y
+// aparecen en Inicio listos para reproducir. La resolución del stream usa la API REST pública de
+// Webtor.io (https://api.webtor.io): añade el torrent como "recurso", lista sus archivos y pide un link
+// de stream ya transcodificado. No usa el navegador oculto de Kino: la API de Webtor expone estos tres
+// pasos como JSON normal, así que no hace falta simular nada dentro de una página.
+//
+// Los ajustes usan solo tipos ya probados (text/url/password/status/action/section): el tipo "list"
+// (una lista editable de entradas) dio un error al instalar en Kino, así que se cambió por 10 campos
+// "url" fijos en vez de una lista dinámica.
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
 // ---------------------------------------------------------------------------------------------
 
+const TORRENT_KEYS = Array.from({ length: 10 }, (_, i) => "torrent" + (i + 1));
+
 function torrentEntries() {
-  const raw = kino.config.get("torrents");
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((e) => ({ name: String((e && e.name) || "").trim(), link: String((e && e.link) || "").trim() }))
-    .filter((e) => e.link);
+  const out = [];
+  for (const key of TORRENT_KEYS) {
+    const v = kino.config.get(key);
+    const link = typeof v === "string" ? v.trim() : "";
+    if (link) out.push({ link });
+  }
+  return out;
 }
 
 function apiKey() {
@@ -167,7 +175,7 @@ export async function home() {
     try {
       const info = await resolveResource(entry.link);
       rememberLink(info.id, entry.link);
-      const title = entry.name || info.name || "Torrent";
+      const title = info.name || "Torrent";
       if (info.multiFile) {
         items.push({
           id: itemId(entry.link),
@@ -215,7 +223,7 @@ export async function resolve(ref) {
 
 export async function settingsStatus() {
   const entries = torrentEntries();
-  if (!entries.length) return { status: "Sin torrents todavía: pega uno en \"Tus torrents\"." };
+  if (!entries.length) return { linked: "Sin torrents todavía: pega uno en Torrent 1." };
   let ok = 0;
   for (const entry of entries) {
     try {
@@ -225,7 +233,7 @@ export async function settingsStatus() {
       // se cuenta como fallido, no se detiene el resto
     }
   }
-  return { status: ok + " de " + entries.length + " torrents cargan bien." };
+  return { linked: ok + " de " + entries.length + " torrents cargan bien." };
 }
 
 export async function action(key) {
@@ -237,12 +245,12 @@ export async function action(key) {
 }
 
 export async function validateSettings(values) {
-  const list = Array.isArray(values.torrents) ? values.torrents : [];
-  for (const entry of list) {
-    const link = String((entry && entry.link) || "").trim();
+  const errors = {};
+  for (const key of TORRENT_KEYS) {
+    const link = typeof values[key] === "string" ? values[key].trim() : "";
     if (link && !looksLikeTorrentLink(link)) {
-      return { torrents: "Uno de los enlaces no parece un magnet ni una URL .torrent válida." };
+      errors[key] = "No parece un magnet ni una URL .torrent válida.";
     }
   }
-  return null;
+  return Object.keys(errors).length ? errors : null;
 }

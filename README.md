@@ -29,12 +29,24 @@ Por ahora no es necesario.
 
 ## Ajustes
 
-- **Tus torrents**: lista (hasta 20) de `{ nombre opcional, magnet o URL .torrent }`.
+- **Torrent 1 a Torrent 10**: pega el magnet o la URL `.torrent` en cada campo que quieras usar; los
+  que dejes vacíos se ignoran. El título que ves en Inicio sale del nombre que el propio torrent trae
+  (Webtor lo devuelve al añadirlo), así que no hace falta ponerle nombre a mano.
 - **API key de Webtor (opcional)**: sin ella usas el límite gratuito compartido; con tu propia key
   (cuenta en webtor.io, o RapidAPI) tienes tu propio límite de uso.
 - **Estado**: cuántos de tus torrents están cargando bien ahora mismo.
 - **Volver a cargar los torrents**: borra la caché local (`kino.storage`) y fuerza a releer metadatos
   de Webtor en el próximo Inicio — útil si cambiaste un link o un torrent dejó de tener semillas.
+
+### Por qué 10 campos fijos y no una lista
+
+La primera versión usaba un ajuste de tipo `"list"` (una lista editable de "agregar otro torrent").
+Kino la rechazó al instalar el plugin ("error en el campo settings") y no pude confirmar con certeza,
+contra tu versión de Kino, qué exactamente estaba mal en esa sintaxis — la documentación pública tiene
+partes desactualizadas o contradictorias sobre `"list"`. Para no seguir adivinando, se cambió a 10
+campos `url` sueltos (`torrent1`...`torrent10`), el mismo tipo de ajuste que ya usa con éxito tu plugin
+de YTMusic. Si más adelante quieres más de 10, hay que agregar más campos `torrentN` a mano (y volver a
+instalar), no hay forma de que la persona "agregue una fila" dinámicamente con este enfoque.
 
 ## Qué hace y qué no
 
