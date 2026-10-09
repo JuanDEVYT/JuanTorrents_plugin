@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.1";
+const VERSION = "0.3.2";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
