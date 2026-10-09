@@ -13,7 +13,7 @@
 
 const API = "https://api.webtor.io";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas: lo justo para no re-añadir el torrent en cada Inicio
-const VERSION = "0.3.2";
+const VERSION = "0.3.3";
 
 // ---------------------------------------------------------------------------------------------
 // Ajustes
@@ -23,8 +23,15 @@ function torrentEntries() {
   const raw = kino.config.get("torrents");
   if (!Array.isArray(raw)) return [];
   return raw
-    .map((e) => ({ name: String((e && e.nombre) || "").trim(), link: String((e && e.url) || "").trim() }))
+    .map((e) => ({ name: String((e && e.nombre) || "").trim(), link: normalizeLink((e && e.url) || "") }))
     .filter((e) => e.link);
+}
+
+// Kino limita este campo a 500 caracteres: se acepta también solo el hash (40 hex o 32 base32) y se arma el magnet.
+function normalizeLink(link) {
+  const l = String(link || "").trim();
+  if (/^[0-9a-f]{40}$/i.test(l) || /^[a-z2-7]{32}$/i.test(l)) return "magnet:?xt=urn:btih:" + l;
+  return l;
 }
 
 function apiKey() {
@@ -33,6 +40,7 @@ function apiKey() {
 }
 
 function looksLikeTorrentLink(link) {
+  link = normalizeLink(link);
   return /^magnet:\?/i.test(link) || /^https?:\/\/\S+\.torrent(\?.*)?$/i.test(link) || /^https?:\/\/\S+$/i.test(link);
 }
 

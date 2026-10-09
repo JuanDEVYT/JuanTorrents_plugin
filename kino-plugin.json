@@ -1,7 +1,7 @@
 {
   "id": "mytorrents",
   "name": "Mis Torrents",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "apiVersion": 8,
   "entry": "plugin.js",
   "description": "Pega el magnet o la URL .torrent de tus propios torrents (los de tu servidor) y reprodúcelos en Kino vía la API pública de Webtor.io.",
@@ -30,7 +30,7 @@
       "max": 20,
       "fields": [
         { "key": "nombre", "label": "Nombre", "type": "text", "hint": "Opcional" },
-        { "key": "url", "label": "Magnet o URL .torrent", "type": "text", "required": true, "hint": "magnet:?xt=urn:btih:... o https://.../archivo.torrent" }
+        { "key": "url", "label": "Magnet o URL .torrent", "type": "text", "required": true, "hint": "Máx. 500 caracteres: usa magnet:?xt=urn:btih:HASH (sin trackers), solo el HASH, o https://.../archivo.torrent" }
       ]
     },
     {
